@@ -22,6 +22,7 @@ nosetests
 
 ## TODO
 
+* Upload package to pypi so the installing instructions works.
 * Automated testing in Python 2.7 and 3.x
 * Write *some* examples and description.
 * Write doc for readthedocs.org
