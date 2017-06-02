@@ -29,4 +29,5 @@ setup(
     classifiers=app_meta.CLASSIFIERS,
     keywords=app_meta.KEYWORDS,
     packages=find_packages(exclude=['docs', 'tests', 'venv']),
+    url=app_meta.URL,
 )
