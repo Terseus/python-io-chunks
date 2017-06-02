@@ -30,4 +30,7 @@ setup(
     keywords=app_meta.KEYWORDS,
     packages=find_packages(exclude=['docs', 'tests', 'venv']),
     url=app_meta.URL,
+    extras_require={
+        'test': 'nose',
+    },
 )
