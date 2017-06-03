@@ -11,7 +11,7 @@ def memoryview_compat(bytes_, castTo='B'):
     try:
         obj.cast(castTo)
     except AttributeError:
-        obj.format = castTo
+        pass  # Python <=3.2 doesn't support format casting :(
     return obj
 
 
