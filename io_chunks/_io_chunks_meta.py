@@ -19,4 +19,4 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-URL = 'https://pypi.python.org/pypi/io-chunks'
+URL = 'https://github.com/Terseus/python-io-chunks'
