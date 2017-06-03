@@ -4,6 +4,7 @@
 from io import (
     RawIOBase, IOBase, SEEK_SET, SEEK_CUR, SEEK_END, UnsupportedOperation
 )
+from six import integer_types
 
 
 class RawIOChunk(RawIOBase):
@@ -38,12 +39,12 @@ class RawIOChunk(RawIOBase):
             raise ValueError("Buffer is not seekable")
         if stream.closed:
             raise ValueError("Buffer is closed")
-        if not isinstance(size, int):
+        if not isinstance(size, integer_types):
             raise TypeError("size: expected int, got {0!s}"
                             .format(type(size)))
         if start is None:
             start = stream.tell()
-        elif not isinstance(start, int):
+        elif not isinstance(start, integer_types):
             raise TypeError("start: expected int, got {0!s}"
                             .format(type(start)))
         self._start = start
@@ -84,9 +85,9 @@ class RawIOChunk(RawIOBase):
         return read_size
 
     def seek(self, pos, whence=0):
-        if not isinstance(pos, int):
+        if not isinstance(pos, integer_types):
             raise TypeError("pos: expected int, got {0!s}".format(type(pos)))
-        if not isinstance(whence, int):
+        if not isinstance(whence, integer_types):
             raise TypeError("whence: expected int, got {0!s}"
                             .format(type(whence)))
         if whence == SEEK_SET:
