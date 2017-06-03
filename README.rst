@@ -8,7 +8,8 @@ Installing
 ==========
 
 .. code-block:: bash
-    pip install io-chunks
+
+    $ pip install io-chunks
 
 
 Python version
@@ -23,7 +24,8 @@ Running the tests
 Run the tests with ``nose``:
 
 .. code-block:: bash
-    nosetests
+
+    $ nosetests
 
 
 TODO
