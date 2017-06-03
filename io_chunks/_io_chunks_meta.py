@@ -8,7 +8,7 @@ LICENSE = "MIT"
 DESCRIPTION = "Stream chunks compatible with IO standard library"
 AUTHOR = "David Caro"
 AUTHOR_EMAIL = "terseus@gmail.com"
-KEYWORDS = ["io", "library"]
+KEYWORDS = ["io", "library", "development"]
 CLASSIFIERS = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
