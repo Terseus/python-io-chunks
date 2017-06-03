@@ -31,6 +31,5 @@ Run the tests with ``nose``:
 TODO
 ====
 
-* Upload package to pypi so the installing instructions works.
 * Write *some* examples and description.
 * Write doc for readthedocs.org
