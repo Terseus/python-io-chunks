@@ -2,7 +2,7 @@
 
 
 import unittest
-from io_extra import RawIOChunk
+from io_chunks import RawIOChunk
 from io import SEEK_END, SEEK_CUR, BytesIO
 from nose.tools import eq_, ok_, assert_raises
 

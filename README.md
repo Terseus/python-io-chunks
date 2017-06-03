@@ -1,11 +1,11 @@
-# io-extra
+# io-chunks
 
-Extra utilites to complement the Python io module.
+Stream chunks compatible with IO standard library
 
 ## Installing
 
 ```
-pip install io-extra
+pip install io-chunks
 ```
 
 ## Python version
@@ -22,6 +22,7 @@ nosetests
 
 ## TODO
 
+* Rewrite README in ReStructured Text.
 * Upload package to pypi so the installing instructions works.
 * Automated testing in Python 2.7 and 3.x
 * Write *some* examples and description.

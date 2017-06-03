@@ -8,10 +8,10 @@ import sys
 
 
 HERE = path.abspath(path.dirname(__file__))
-sys.path.append(path.join(HERE, 'io_extra'))
+sys.path.append(path.join(HERE, 'io_chunks'))
 
 
-import _io_extra_meta as app_meta  # noqa
+import _io_chunks_meta as app_meta  # noqa
 
 
 # Get the long description from the README file
