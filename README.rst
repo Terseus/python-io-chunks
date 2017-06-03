@@ -4,6 +4,10 @@ io-chunks
 Stream chunks compatible with IO standard library
 
 
+.. image:: https://travis-ci.org/Terseus/python-io-chunks.svg?branch=master
+    :target: https://travis-ci.org/Terseus/python-io-chunks
+
+
 Installing
 ==========
 
