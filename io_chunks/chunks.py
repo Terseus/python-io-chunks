@@ -50,7 +50,7 @@ class RawIOChunk(RawIOBase):
         self._size = size
         self._cursor = 0
         self._stream = stream
-        super(self, RawIOChunk).__init__()
+        super(RawIOChunk, self).__init__()
 
     def readinto(self, array):
         if not isinstance(array, (bytearray, memoryview)):
