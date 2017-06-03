@@ -6,6 +6,15 @@ from io import (
 )
 
 
+def memoryview_compat(bytes_, castTo='B'):
+    obj = memoryview(bytes_)
+    try:
+        obj.cast(castTo)
+    except AttributeError:
+        obj.format = castTo
+    return obj
+
+
 class RawIOChunk(RawIOBase):
     """
     An IO read-only object with access to a portion of another IO object.
@@ -65,7 +74,7 @@ class RawIOChunk(RawIOBase):
         remaining = self._size - self._cursor
         if remaining <= 0:
             return 0
-        array = memoryview(array).cast('B')
+        array = memoryview_compat(array, 'B')
         position = self._stream.tell()
         self._stream.seek(self._start + self._cursor)
         if len(array) > remaining:

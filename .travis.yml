@@ -8,4 +8,4 @@ python:
     - "3.6"
 install:
     - pip install .
-script: nosetests
+script: nosetests -v
