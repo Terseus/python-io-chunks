@@ -15,7 +15,7 @@ Installing
 Python version
 ==============
 
-Tested in Python 3.6.
+Tested in Python 2.7 and 3.2 to 3.6
 
 
 Running the tests
@@ -32,6 +32,5 @@ TODO
 ====
 
 * Upload package to pypi so the installing instructions works.
-* Automated testing in Python 2.7 and 3.x
 * Write *some* examples and description.
 * Write doc for readthedocs.org
