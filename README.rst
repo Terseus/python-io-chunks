@@ -15,7 +15,7 @@ Installing
 Python version
 ==============
 
-Tested in Python 3.5.
+Tested in Python 3.6.
 
 
 Running the tests
