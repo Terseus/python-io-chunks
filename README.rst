@@ -37,3 +37,4 @@ TODO
 
 * Write *some* examples and description.
 * Write doc for readthedocs.org
+* Add tests for concurrency support.
