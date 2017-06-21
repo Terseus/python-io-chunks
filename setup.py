@@ -37,5 +37,6 @@ setup(
     ],
     extras_require={
         'test': 'nose',
+        'doc': 'Sphinx>=1.7.5',
     },
 )

@@ -17,20 +17,24 @@ class RawIOChunk(RawIOBase):
     contents.
     """
 
-    size = property(lambda s: s._size)
-    start = property(lambda s: s._start)
-    end = property(lambda s: s._start + s._size)
+    size = property(lambda s: s._size,
+                    doc="Size of the chunk")
+    start = property(lambda s: s._start,
+                     doc="Start position of the chunk")
+    end = property(lambda s: s._start + s._size,
+                   doc="End position of the chunk")
 
     def __init__(self, stream, size, start=None):
         """
         Creates a new RawIOChunk.
 
-        Args:
-            stream: An IO or file-like object with the original stream; must
-                be seekable.
-            size: The size of the chunk.
-            start: The start position in the original stream; if `None` it
-                uses the current stream position.
+        :param io.IOBase stream: An IO of file-like object with the original
+            stream; must be seekable.
+        :param int size: The size of the chunk.
+        :param start: The start position in the original stream; if `None` it
+            uses the current stream position.
+        :type start: int or None
+        :raises ValueError: If `stream` is closed or not seekable.
         """
         if not isinstance(stream, IOBase):
             raise TypeError("stream: expected IOBase, got {0!s}"
@@ -104,22 +108,40 @@ class RawIOChunk(RawIOBase):
         return self._cursor
 
     def seekable(self):
+        """ Always returns `True` """
         return True
 
     def readable(self):
+        """ Always returns `True` """
         return True
 
     def close(self):
+        """
+        Do not use, close the underlying stream instead.
+
+        :raises UnsupportedOperation:
+        """
         raise UnsupportedOperation(
             "This stream cannot be closed, close the underlying stream instead"
         )
 
     @property
     def closed(self):
+        """
+        Returns whenever the underlying stream is closed.
+        """
         return self._stream.closed
 
     def write(self, *args, **kwargs):
+        """
+        This streams doesn't support writing.
+
+        :raises UnsupportedOperation:
+        """
         raise UnsupportedOperation("This stream doesn't support write")
 
     def fileno(self):
+        """
+        Returns the underlying stream `fileno`.
+        """
         return self._stream.fileno()
