@@ -20,8 +20,8 @@ Stream chunks compatible with IO standard library
   :target: https://github.com/Terseus/python-io-chunks/releases/latest
 
 
-CIs status
-~~~~~~~~~~
+Cotinuous Integration
+~~~~~~~~~~~~~~~~~~~~~
 
 +-------------------+--------------------------+-------------+------------+-------------+
 | CI name           |  Travis                  | Appveyor    | CircleCI   | CodeClimate |
@@ -76,6 +76,6 @@ TODO
 * Add tests for concurrency support.
 
 
-.. _read more about tox here:https://tox.readthedocs.io/en/latest/install.html
+.. _`read more about tox here`:https://tox.readthedocs.io/en/latest/install.html
 .. |img_ci_travis_status| image:: https://travis-ci.org/Terseus/python-io-chunks.svg?branch=master
     :target: https://travis-ci.org/Terseus/python-io-chunks
