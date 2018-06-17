@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
+"""TODO: doc module"""
 
 
 import unittest
+from io import BytesIO, SEEK_CUR, SEEK_END
 from io_chunks import RawIOChunk
-from io import SEEK_END, SEEK_CUR, BytesIO
-from nose.tools import eq_, ok_, assert_raises
+from nose.tools import assert_raises, eq_, ok_
 
 
 class TestRawIOChunk(unittest.TestCase):
+    """TODO: doc class"""
+
     STRINGS = [
         b'hello',
         b'beautiful',
@@ -15,9 +18,15 @@ class TestRawIOChunk(unittest.TestCase):
     ]
 
     def get_raw_buffer(self):
+        """[summary]
+
+        Returns:
+            [type] -- [description]
+        """
         return BytesIO(b''.join(self.STRINGS))
 
     def test_file_begin(self):
+        """Testcase named: test_file_begin"""
         with self.get_raw_buffer() as data_file:
             chunk = RawIOChunk(data_file, len(self.STRINGS[0]))
             eq_(chunk.start, 0)
@@ -28,12 +37,14 @@ class TestRawIOChunk(unittest.TestCase):
             eq_(chunk.tell(), chunk.end)
 
     def test_file_middle(self):
+        """Testcase named: test_file_middle"""
         with self.get_raw_buffer() as data_file:
             chunk = RawIOChunk(data_file, len(self.STRINGS[1]),
                                len(self.STRINGS[0]))
             eq_(chunk.read(), self.STRINGS[1])
 
     def test_eof(self):
+        """Testcase named: test_eof"""
         with self.get_raw_buffer() as data_file:
             chunk = RawIOChunk(data_file, len(self.STRINGS[2]) + 1,
                                len(self.STRINGS[0]) + len(self.STRINGS[1]))
@@ -45,6 +56,7 @@ class TestRawIOChunk(unittest.TestCase):
                 chunk.read(1)
 
     def test_closed(self):
+        """Testcase named: test_closed"""
         with self.get_raw_buffer() as data_file:
             chunk = RawIOChunk(data_file, len(self.STRINGS[0]))
             ok_(not chunk.closed)
@@ -53,6 +65,7 @@ class TestRawIOChunk(unittest.TestCase):
             chunk.read()
 
     def test_seek(self):
+        """Testcase named: test_seek"""
         with self.get_raw_buffer() as data_file:
             chunk = RawIOChunk(data_file, len(self.STRINGS[1]),
                                len(self.STRINGS[0]))
@@ -68,6 +81,7 @@ class TestRawIOChunk(unittest.TestCase):
             eq_(chunk.read(), self.STRINGS[1])
 
     def test_full_file(self):
+        """Testcase named: test_full_file"""
         with self.get_raw_buffer() as data_file:
             chunks = [RawIOChunk(data_file, len(self.STRINGS[0]))]
             chunks.append(RawIOChunk(data_file, len(self.STRINGS[1]),

@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
+"""TODO: doc module"""
 
 
 from io import (
-    RawIOBase, IOBase, SEEK_SET, SEEK_CUR, SEEK_END, UnsupportedOperation
+    IOBase, RawIOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 )
 from six import integer_types
 
 
 class RawIOChunk(RawIOBase):
-    """
-    An IO read-only object with access to a portion of another IO object.
+    """An IO read-only object with access to a portion of another IO object.
     In other terms, a sub-stream of a stream.
 
-    It's meant to be used with file-like objects from `open` so you can divide
-    the file stream in chunks without having an in-memory copy of all of its
-    contents.
+    It's meant to be used with file-like objects from `open` so
+    you can divide the file stream in chunks without having an
+    in-memory copy of all of its contents.
     """
 
     size = property(lambda s: s._size)
@@ -55,15 +55,15 @@ class RawIOChunk(RawIOBase):
 
     def readinto(self, array):
         """[summary]
-        
+
         Arguments:
             array {[type]} -- [description]
-        
+
         Raises:
             TypeError -- [description]
             ValueError -- [description]
             EOFError -- [description]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -101,22 +101,21 @@ class RawIOChunk(RawIOBase):
 
     def seek(self, pos, whence=0):
         """[summary]
-        
+
         Arguments:
             pos {[type]} -- [description]
-        
+
         Keyword Arguments:
             whence {int} -- [description] (default: {0})
-        
+
         Raises:
             TypeError -- [description]
             TypeError -- [description]
             ValueError -- [description]
-        
+
         Returns:
             [type] -- [description]
         """
-
         if not isinstance(pos, integer_types):
             raise TypeError("pos: expected int, got {0!s}".format(type(pos)))
         if not isinstance(whence, integer_types):
@@ -134,7 +133,7 @@ class RawIOChunk(RawIOBase):
 
     def tell(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -142,7 +141,7 @@ class RawIOChunk(RawIOBase):
 
     def seekable(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -150,7 +149,7 @@ class RawIOChunk(RawIOBase):
 
     def readable(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -158,7 +157,7 @@ class RawIOChunk(RawIOBase):
 
     def close(self):
         """[summary]
-        
+
         Raises:
             UnsupportedOperation -- [description]
         """
@@ -170,7 +169,7 @@ class RawIOChunk(RawIOBase):
     @property
     def closed(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -178,7 +177,7 @@ class RawIOChunk(RawIOBase):
 
     def write(self, *args, **kwargs):
         """[summary]
-        
+
         Raises:
             UnsupportedOperation -- [description]
         """
@@ -186,7 +185,7 @@ class RawIOChunk(RawIOBase):
 
     def fileno(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
