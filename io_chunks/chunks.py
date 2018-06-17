@@ -54,6 +54,19 @@ class RawIOChunk(RawIOBase):
         super(RawIOChunk, self).__init__()
 
     def readinto(self, array):
+        """[summary]
+        
+        Arguments:
+            array {[type]} -- [description]
+        
+        Raises:
+            TypeError -- [description]
+            ValueError -- [description]
+            EOFError -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
         if not isinstance(array, (bytearray, memoryview)):
             raise TypeError(
                 "array: expected bytearray or memoryview, got {0!s}"
@@ -70,6 +83,8 @@ class RawIOChunk(RawIOBase):
         try:
             array = array.cast('B')
         except AttributeError:
+            # Maybe a flag to return if errored state for this use case ?
+            # returning (read_size, error_state) instead of read_size
             pass  # Python <=3.2 doesn't support format casting :(
         position = self._stream.tell()
         self._stream.seek(self._start + self._cursor)
@@ -85,6 +100,23 @@ class RawIOChunk(RawIOBase):
         return read_size
 
     def seek(self, pos, whence=0):
+        """[summary]
+        
+        Arguments:
+            pos {[type]} -- [description]
+        
+        Keyword Arguments:
+            whence {int} -- [description] (default: {0})
+        
+        Raises:
+            TypeError -- [description]
+            TypeError -- [description]
+            ValueError -- [description]
+        
+        Returns:
+            [type] -- [description]
+        """
+
         if not isinstance(pos, integer_types):
             raise TypeError("pos: expected int, got {0!s}".format(type(pos)))
         if not isinstance(whence, integer_types):
@@ -101,25 +133,61 @@ class RawIOChunk(RawIOBase):
         return self._cursor
 
     def tell(self):
+        """[summary]
+        
+        Returns:
+            [type] -- [description]
+        """
         return self._cursor
 
     def seekable(self):
+        """[summary]
+        
+        Returns:
+            [type] -- [description]
+        """
         return True
 
     def readable(self):
+        """[summary]
+        
+        Returns:
+            [type] -- [description]
+        """
         return True
 
     def close(self):
+        """[summary]
+        
+        Raises:
+            UnsupportedOperation -- [description]
+        """
         raise UnsupportedOperation(
-            "This stream cannot be closed, close the underlying stream instead"
+            ("This stream cannot be closed, "
+             "close the underlying stream instead")
         )
 
     @property
     def closed(self):
+        """[summary]
+        
+        Returns:
+            [type] -- [description]
+        """
         return self._stream.closed
 
     def write(self, *args, **kwargs):
+        """[summary]
+        
+        Raises:
+            UnsupportedOperation -- [description]
+        """
         raise UnsupportedOperation("This stream doesn't support write")
 
     def fileno(self):
+        """[summary]
+        
+        Returns:
+            [type] -- [description]
+        """
         return self._stream.fileno()

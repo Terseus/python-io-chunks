@@ -30,12 +30,9 @@ setup(
     long_description=get_long_description(),
     classifiers=app_meta.CLASSIFIERS,
     keywords=app_meta.KEYWORDS,
-    packages=find_packages(exclude=['docs', 'tests', 'venv']),
+    packages=find_packages(exclude=app_meta.PACKAGES_EXCLUDED),
     url=app_meta.URL,
-    install_requires=[
-        'six'
-    ],
-    extras_require={
-        'test': 'nose',
-    },
+    install_requires=app_meta.INSTALL_REQUIRES,
+    extras_require=app_meta.EXTRAS_REQUIRE,
+    tests_require=app_meta.TESTS_REQUIRE,
 )

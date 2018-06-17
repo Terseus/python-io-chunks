@@ -90,3 +90,6 @@ ENV/
 .ropeproject
 # }}}
 # vim:foldmethod=marker:foldlevel=0
+
+# Visual Code
+.vscode
