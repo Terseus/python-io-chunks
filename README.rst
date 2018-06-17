@@ -57,7 +57,7 @@ Run the tests with ``nose``:
 TOX environments
 ~~~~~~~~~~~~~~~~
 
-*To use tox , need to install first with (read more about tox here, tox_)* : ``pip install tox``
+*To use tox , need to install first with* (`read more about tox here`_) : ``pip install tox``
 
 +-------------------------------+------------------------------------+
 | Env name                      | Env description                    |
@@ -76,6 +76,6 @@ TODO
 * Add tests for concurrency support.
 
 
-.. _tox:https://tox.readthedocs.io/en/latest/install.html
+.. _`read more about tox here`: https://tox.readthedocs.io/en/latest/install.html
 .. |img_ci_travis_status| image:: https://travis-ci.org/Terseus/python-io-chunks.svg?branch=master
     :target: https://travis-ci.org/Terseus/python-io-chunks
