@@ -25,11 +25,11 @@ Tested in Python 2.7 and 3.2 to 3.6
 Running the tests
 =================
 
-Run the tests with ``nose``:
+Run the tests with ``pytest``:
 
 .. code-block:: bash
 
-    $ nosetests
+    $ pytest
 
 
 TODO

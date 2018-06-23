@@ -36,7 +36,7 @@ setup(
         'six'
     ],
     extras_require={
-        'test': 'nose',
+        'test': 'pytest',
         'doc': 'Sphinx>=1.7.5',
     },
 )
