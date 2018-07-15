@@ -36,7 +36,11 @@ setup(
         'six'
     ],
     extras_require={
-        'test': 'pytest',
-        'doc': 'Sphinx>=1.7.5',
+        'dev': [
+            'flake8==3.5.0',
+            'pytest>=3.6.2',
+            'Sphinx>=1.7.5',
+            'tox>=3.1.2',
+        ],
     },
 )
