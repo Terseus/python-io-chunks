@@ -93,3 +93,6 @@ ENV/
 
 # Visual Code
 .vscode
+
+# Pytest
+.pytest_cache
