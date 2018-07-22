@@ -41,5 +41,10 @@ TESTS_REQUIRE = ["nose"]
 PACKAGES_EXCLUDED = ["docs", "tests", "venv"]
 INSTALL_REQUIRES = ["six"]
 EXTRAS_REQUIRE = {
-    'test': 'nose',
+    'dev': [
+        'flake8==3.5.0',
+        'pytest>=3.6.2',
+        'Sphinx>=1.7.5',
+        'tox>=3.1.2',
+    ],
 }
