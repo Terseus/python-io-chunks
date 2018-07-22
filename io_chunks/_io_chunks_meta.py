@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""TODO: doc module"""
 
 
 NAME = "io-chunks"
@@ -8,7 +9,16 @@ LICENSE = "MIT"
 DESCRIPTION = "Stream chunks compatible with IO standard library"
 AUTHOR = "David Caro"
 AUTHOR_EMAIL = "terseus@gmail.com"
-KEYWORDS = ["io", "library", "development"]
+KEYWORDS = [
+    "io",
+    "library",
+    "development",
+    "chunk",
+    "file",
+    "read",
+    "write",
+    "stream"
+]
 CLASSIFIERS = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -27,3 +37,14 @@ CLASSIFIERS = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 URL = 'https://github.com/Terseus/python-io-chunks'
+TESTS_REQUIRE = ["nose"]
+PACKAGES_EXCLUDED = ["docs", "tests", "venv"]
+INSTALL_REQUIRES = ["six"]
+EXTRAS_REQUIRE = {
+    'dev': [
+        'flake8==3.5.0',
+        'pytest>=3.6.2',
+        'Sphinx>=1.7.5',
+        'tox>=3.1.2',
+    ],
+}

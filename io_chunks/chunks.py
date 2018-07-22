@@ -1,36 +1,40 @@
 # -*- coding: utf-8 -*-
+"""TODO: doc module"""
 
 
 from io import (
-    RawIOBase, IOBase, SEEK_SET, SEEK_CUR, SEEK_END, UnsupportedOperation
+    IOBase, RawIOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 )
 from six import integer_types
 
 
 class RawIOChunk(RawIOBase):
-    """
-    An IO read-only object with access to a portion of another IO object.
+    """An IO read-only object with access to a portion of another IO object.
     In other terms, a sub-stream of a stream.
 
-    It's meant to be used with file-like objects from `open` so you can divide
-    the file stream in chunks without having an in-memory copy of all of its
-    contents.
+    It's meant to be used with file-like objects from `open` so
+    you can divide the file stream in chunks without having an
+    in-memory copy of all of its contents.
     """
 
-    size = property(lambda s: s._size)
-    start = property(lambda s: s._start)
-    end = property(lambda s: s._start + s._size)
+    size = property(lambda s: s._size,
+                    doc="Size of the chunk")
+    start = property(lambda s: s._start,
+                     doc="Start position of the chunk")
+    end = property(lambda s: s._start + s._size,
+                   doc="End position of the chunk")
 
     def __init__(self, stream, size, start=None):
         """
         Creates a new RawIOChunk.
 
-        Args:
-            stream: An IO or file-like object with the original stream; must
-                be seekable.
-            size: The size of the chunk.
-            start: The start position in the original stream; if `None` it
-                uses the current stream position.
+        :param io.IOBase stream: An IO of file-like object with the original
+            stream; must be seekable.
+        :param int size: The size of the chunk.
+        :param start: The start position in the original stream; if `None` it
+            uses the current stream position.
+        :type start: int or None
+        :raises ValueError: If `stream` is closed or not seekable.
         """
         if not isinstance(stream, IOBase):
             raise TypeError("stream: expected IOBase, got {0!s}"
@@ -54,6 +58,19 @@ class RawIOChunk(RawIOBase):
         super(RawIOChunk, self).__init__()
 
     def readinto(self, array):
+        """[summary]
+
+        Arguments:
+            array {[type]} -- [description]
+
+        Raises:
+            TypeError -- [description]
+            ValueError -- [description]
+            EOFError -- [description]
+
+        Returns:
+            [type] -- [description]
+        """
         if not isinstance(array, (bytearray, memoryview)):
             raise TypeError(
                 "array: expected bytearray or memoryview, got {0!s}"
@@ -70,6 +87,8 @@ class RawIOChunk(RawIOBase):
         try:
             array = array.cast('B')
         except AttributeError:
+            # Maybe a flag to return if errored state for this use case ?
+            # returning (read_size, error_state) instead of read_size
             pass  # Python <=3.2 doesn't support format casting :(
         position = self._stream.tell()
         self._stream.seek(self._start + self._cursor)
@@ -85,6 +104,22 @@ class RawIOChunk(RawIOBase):
         return read_size
 
     def seek(self, pos, whence=0):
+        """[summary]
+
+        Arguments:
+            pos {[type]} -- [description]
+
+        Keyword Arguments:
+            whence {int} -- [description] (default: {0})
+
+        Raises:
+            TypeError -- [description]
+            TypeError -- [description]
+            ValueError -- [description]
+
+        Returns:
+            [type] -- [description]
+        """
         if not isinstance(pos, integer_types):
             raise TypeError("pos: expected int, got {0!s}".format(type(pos)))
         if not isinstance(whence, integer_types):
@@ -101,25 +136,49 @@ class RawIOChunk(RawIOBase):
         return self._cursor
 
     def tell(self):
+        """[summary]
+
+        Returns:
+            [type] -- [description]
+        """
         return self._cursor
 
     def seekable(self):
+        """ Always returns `True` """
         return True
 
     def readable(self):
+        """ Always returns `True` """
         return True
 
     def close(self):
+        """
+        Do not use, close the underlying stream instead.
+
+        :raises UnsupportedOperation:
+        """
         raise UnsupportedOperation(
-            "This stream cannot be closed, close the underlying stream instead"
+            ("This stream cannot be closed, "
+             "close the underlying stream instead")
         )
 
     @property
     def closed(self):
+        """
+        Returns whenever the underlying stream is closed.
+        """
         return self._stream.closed
 
     def write(self, *args, **kwargs):
+        """
+        This streams doesn't support writing.
+
+        :raises UnsupportedOperation:
+        """
         raise UnsupportedOperation("This stream doesn't support write")
 
     def fileno(self):
+        """
+        Returns the underlying stream `fileno`.
+        """
         return self._stream.fileno()
