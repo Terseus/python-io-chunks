@@ -13,5 +13,8 @@ matrix:
       env: TOXENV=py35
     - python: 3.6
       env: TOXENV=py36
+install:	
+  # fails for py32+py33: pip install '.[dev]'
+  - pip install flake8==3.5.0 pytest>=3.6.2 Sphinx>=1.7.5 tox>=3.1.2
 script:
   - tox
