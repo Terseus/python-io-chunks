@@ -5,7 +5,6 @@
 import unittest
 from io import BytesIO, SEEK_CUR, SEEK_END
 from io_chunks import RawIOChunk
-from io import SEEK_END, SEEK_CUR, BytesIO
 
 
 class TestRawIOChunk(unittest.TestCase):
