@@ -2,7 +2,7 @@
 
 
 NAME = "io-chunks"
-VERSION = (1, 0, 1)
+VERSION = (1, 0, 2)
 VERSION_STR = '.'.join(map(str, VERSION))
 LICENSE = "MIT"
 DESCRIPTION = "Stream chunks compatible with IO standard library"
