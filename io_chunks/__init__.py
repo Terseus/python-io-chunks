@@ -3,5 +3,4 @@
 
 from io_chunks.chunks import RawIOChunk  # noqa: F401
 
-
-__all__ = ['RawIOChunk']
+__all__ = ["RawIOChunk"]

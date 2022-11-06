@@ -39,3 +39,8 @@ show_missing = true
 
 [tool.pytest.ini_options]
 addopts = "--cov io_chunks/"
+
+[tool.isort]
+profile = "black"
+skip_gitignore = true
+line_length = 88
