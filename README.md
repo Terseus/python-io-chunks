@@ -44,7 +44,7 @@ $ pip install io-chunks
 
 ## Documentation
 
-You can read the current doc at the [readchedocs page](http://io-chunks.readthedocs.io/en/latest/).
+Use the source, Luke!
 
 ## Run the tests
 
