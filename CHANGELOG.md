@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Added
 - Change `README.rst` to `README.md`.
+- Replace `setup.py` with `pyproject.toml`.
 
 ## [1.0.2] - 2017-07-23
 ### Added

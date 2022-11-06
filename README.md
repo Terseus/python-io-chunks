@@ -36,7 +36,7 @@ Amazing, right?
 
 ## Install
 
-Use `pip`
+Use `pip`:
 
 ```bash
 $ pip install io-chunks
@@ -48,7 +48,14 @@ Use the source, Luke!
 
 ## Run the tests
 
-Run the tests with `pytest`
+Create a venv with your favorite tool and activate it.
+Then, install the development dependencies:
+
+```bash
+$ pip install -r requirements-dev.txt
+```
+
+Run the tests with `pytest`:
 
 ```bash
 $ pytest
