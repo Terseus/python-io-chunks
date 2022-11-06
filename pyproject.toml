@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "io-chunks"
+version = "1.0.2"
+description = "Utilities to divide a buffer into smaller buffers"
+urls = {homepage = "https://github.com/Terseus/python-io-chunks/"}
+authors = [
+    {name = "David Caro", email = "terseus@fastmail.com"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dynamic = ["readme", "dependencies"]
+keywords = ["io", "library", "development"]
+
+[tool.setuptools]
+packages = ["io_chunks"]
+
+# Taken from https://github.com/pypa/setuptools/blob/d138ec08efc2dbaebb8752e215e324f38bd807a2/setuptools/tests/config/test_pyprojecttoml.py#L68
+[tool.setuptools.dynamic.readme]
+file = ["README.md"]
+content-type = "text/markdown"
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+
+[tool.pytest.ini_options]
+addopts = "--cov io_chunks/"
