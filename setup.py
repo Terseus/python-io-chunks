@@ -28,6 +28,7 @@ setup(
     license=app_meta.LICENSE,
     description=app_meta.DESCRIPTION,
     long_description=get_long_description(),
+    long_description_content_type="text/markdown",
     classifiers=app_meta.CLASSIFIERS,
     keywords=app_meta.KEYWORDS,
     packages=find_packages(exclude=['docs', 'tests', 'venv']),
