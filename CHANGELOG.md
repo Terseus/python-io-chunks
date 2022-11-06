@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Change `README.rst` to `README.md`.
 - Replace `setup.py` with `pyproject.toml`.
 - Add isort, black, pre-commit.
+- Remove Python 2 support.
 
 ## [1.0.2] - 2017-07-23
 ### Added

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from io import SEEK_CUR, SEEK_END, SEEK_SET, IOBase, RawIOBase, UnsupportedOperation
 
 
@@ -46,7 +43,7 @@ class RawIOChunk(RawIOBase):
         self._size = size
         self._cursor = 0
         self._stream = stream
-        super(RawIOChunk, self).__init__()
+        super().__init__()
 
     def readinto(self, array):
         if not isinstance(array, (bytearray, memoryview)):
