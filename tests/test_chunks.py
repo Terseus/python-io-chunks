@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import unittest
 from io import SEEK_CUR, SEEK_END, BytesIO
 
