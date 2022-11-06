@@ -1,5 +1,2 @@
-flake8
-isort
-black
-pytest
-pytest-cov
+-r requirements-lint.txt
+-r requirements-tests.txt
