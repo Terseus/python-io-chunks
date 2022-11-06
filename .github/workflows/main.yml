@@ -33,7 +33,7 @@ jobs:
         python -m build --wheel
         python -m pip install -r requirements-dev.txt
         python -m pip install dist/io_chunks-*.whl
+    - name: Linters
+      run: flake8 .
     - name: Test with pytest
-      run: |
-        pytest --cov-report term
-
+      run: pytest --cov-report term
