@@ -34,4 +34,6 @@ jobs:
         python -m pip install -r requirements-tests.txt
         python -m pip install dist/io_chunks-*.whl
     - name: Test with pytest
-      run: pytest --cov-report term
+      run: pytest --cov-report term --cov-report xml
+    - uses: codecov/codecov-action@v3
+      name: Codecov
