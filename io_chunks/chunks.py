@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from io import (
-    RawIOBase, IOBase, SEEK_SET, SEEK_CUR, SEEK_END, UnsupportedOperation
-)
+from io import SEEK_CUR, SEEK_END, SEEK_SET, IOBase, RawIOBase, UnsupportedOperation
 
 
 class RawIOChunk(RawIOBase):
@@ -16,12 +14,9 @@ class RawIOChunk(RawIOBase):
     contents.
     """
 
-    size = property(lambda s: s._size,
-                    doc="Size of the chunk")
-    start = property(lambda s: s._start,
-                     doc="Start position of the chunk")
-    end = property(lambda s: s._start + s._size,
-                   doc="End position of the chunk")
+    size = property(lambda s: s._size, doc="Size of the chunk")
+    start = property(lambda s: s._start, doc="Start position of the chunk")
+    end = property(lambda s: s._start + s._size, doc="End position of the chunk")
 
     def __init__(self, stream, size, start=None):
         """
@@ -36,20 +31,17 @@ class RawIOChunk(RawIOBase):
         :raises ValueError: If `stream` is closed or not seekable.
         """
         if not isinstance(stream, IOBase):
-            raise TypeError("stream: expected IOBase, got {0!s}"
-                            .format(stream))
+            raise TypeError("stream: expected IOBase, got {0!s}".format(stream))
         if not stream.seekable():
             raise ValueError("Buffer is not seekable")
         if stream.closed:
             raise ValueError("Buffer is closed")
         if not isinstance(size, int):
-            raise TypeError("size: expected int, got {0!s}"
-                            .format(type(size)))
+            raise TypeError("size: expected int, got {0!s}".format(type(size)))
         if start is None:
             start = stream.tell()
         elif not isinstance(start, int):
-            raise TypeError("start: expected int, got {0!s}"
-                            .format(type(start)))
+            raise TypeError("start: expected int, got {0!s}".format(type(start)))
         self._start = start
         self._size = size
         self._cursor = 0
@@ -59,8 +51,7 @@ class RawIOChunk(RawIOBase):
     def readinto(self, array):
         if not isinstance(array, (bytearray, memoryview)):
             raise TypeError(
-                "array: expected bytearray or memoryview, got {0!s}"
-                .format(type(array))
+                "array: expected bytearray or memoryview, got {0!s}".format(type(array))
             )
         if self.closed:
             raise ValueError("I/O operation on closed stream")
@@ -71,7 +62,7 @@ class RawIOChunk(RawIOBase):
             return 0
         array = memoryview(array)
         try:
-            array = array.cast('B')
+            array = array.cast("B")
         except AttributeError:
             pass  # Python <=3.2 doesn't support format casting :(
         position = self._stream.tell()
@@ -91,8 +82,7 @@ class RawIOChunk(RawIOBase):
         if not isinstance(pos, int):
             raise TypeError("pos: expected int, got {0!s}".format(type(pos)))
         if not isinstance(whence, int):
-            raise TypeError("whence: expected int, got {0!s}"
-                            .format(type(whence)))
+            raise TypeError("whence: expected int, got {0!s}".format(type(whence)))
         if whence == SEEK_SET:
             self._cursor = pos
         elif whence == SEEK_CUR:
@@ -107,11 +97,11 @@ class RawIOChunk(RawIOBase):
         return self._cursor
 
     def seekable(self):
-        """ Always returns `True` """
+        """Always returns `True`"""
         return True
 
     def readable(self):
-        """ Always returns `True` """
+        """Always returns `True`"""
         return True
 
     def close(self):

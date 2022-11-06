@@ -3,7 +3,7 @@
 
 NAME = "io-chunks"
 VERSION = (1, 0, 2)
-VERSION_STR = '.'.join(map(str, VERSION))
+VERSION_STR = ".".join(map(str, VERSION))
 LICENSE = "MIT"
 DESCRIPTION = "Stream chunks compatible with IO standard library"
 AUTHOR = "David Caro"
@@ -26,4 +26,4 @@ CLASSIFIERS = [
     "Programming Language :: Python :: 3.6",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-URL = 'https://github.com/Terseus/python-io-chunks'
+URL = "https://github.com/Terseus/python-io-chunks"
