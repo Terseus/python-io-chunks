@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Replace `setup.py` with `pyproject.toml`.
 - Add isort, black, pre-commit.
 - Remove Python 2 support.
+- Add typing, mypy.
 
 ## [1.0.2] - 2017-07-23
 ### Added
