@@ -80,6 +80,14 @@ class RawIOChunk(RawIOBase):
     def readinto(  # type: ignore[override]
         self, array: Union[bytearray, memoryview]
     ) -> Union[int, None]:
+        """
+        Read bytes into a pre-allocated array using at most one call to the underlying
+        stream.
+
+        If the underlying stream is closed raises `ValueError`.
+        If there si no more bytes to read in the underlying stream writes nothing and
+        return 0, even if there was remaining bytes in the chunk.
+        """
         if self.closed:
             raise ValueError("I/O operation on closed stream")
         if len(array) == 0:
@@ -97,7 +105,7 @@ class RawIOChunk(RawIOBase):
         if read_size is None:
             return None
         if read_size == 0:
-            raise EOFError("End of file while reading original stream")
+            return 0
         self._cursor += read_size
         self._stream.seek(position)
         return read_size

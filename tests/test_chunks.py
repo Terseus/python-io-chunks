@@ -22,32 +22,26 @@ def test_file_middle():
         assert chunk.read() == b"23456"
 
 
-@pytest.mark.xfail(strict=True, reason="Bug or feature?")
 def test_read_until_eof():
     with BytesIO(b"0123456789") as buffer:
         chunk = RawIOChunk(buffer, size=6, start=5)
         assert chunk.read() == b"56789"
 
 
-@pytest.mark.xfail(strict=True, reason="Known bug - remaining is zero")
 def test_read_past_eof():
     with BytesIO(b"0123456789") as buffer:
         chunk = RawIOChunk(buffer, size=1, start=9)
         assert chunk.read(1) == b"9"
-        with pytest.raises(EOFError):
-            chunk.read()
+        assert chunk.read(1) == b""
 
 
 def test_eof():
     with BytesIO(b"0123456789") as buffer:
         chunk = RawIOChunk(buffer, 6, 5)
-        with pytest.raises(EOFError):
-            chunk.read()
+        assert chunk.read() == b"56789"
         chunk.seek(0)
         assert chunk.read(5) == b"56789"
-        with pytest.raises(EOFError):
-            # FIXME: Here remaining is 1, why?
-            chunk.read(1)
+        assert chunk.read() == b""
 
 
 def test_closed():
