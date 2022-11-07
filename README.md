@@ -28,7 +28,7 @@ with open("test_file", "rb") as file_handle:
     # This prints b'world!'
     print(chunk_world.read())
     # Now, this prints b'Hello beautiful world!' to demostrate that the original
-    # `file_handle` pointer wasn"t altered at all!
+    # `file_handle` pointer wasn't altered at all!
     print(file_handle.read())
 ```
 

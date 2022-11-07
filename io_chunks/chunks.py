@@ -1,4 +1,12 @@
-from io import SEEK_CUR, SEEK_END, SEEK_SET, IOBase, RawIOBase, UnsupportedOperation
+from io import (
+    SEEK_CUR,
+    SEEK_END,
+    SEEK_SET,
+    BufferedIOBase,
+    RawIOBase,
+    UnsupportedOperation,
+)
+from typing import Optional, Union
 
 
 class RawIOChunk(RawIOBase):
@@ -11,45 +19,67 @@ class RawIOChunk(RawIOBase):
     contents.
     """
 
-    size = property(lambda s: s._size, doc="Size of the chunk")
-    start = property(lambda s: s._start, doc="Start position of the chunk")
-    end = property(lambda s: s._start + s._size, doc="End position of the chunk")
-
-    def __init__(self, stream, size, start=None):
+    def __init__(
+        self,
+        stream: Union[RawIOBase, BufferedIOBase],
+        size: int,
+        start: Optional[int] = None,
+    ) -> None:
         """
         Creates a new RawIOChunk.
 
-        :param io.IOBase stream: An IO of file-like object with the original
-            stream; must be seekable.
+        :param stream: An IO of file-like object with the original stream;
+            must be seekable.
+        :type stream: RawIOBase or BufferedIOBase
         :param int size: The size of the chunk.
         :param start: The start position in the original stream; if `None` it
             uses the current stream position.
         :type start: int or None
         :raises ValueError: If `stream` is closed or not seekable.
         """
-        if not isinstance(stream, IOBase):
-            raise TypeError("stream: expected IOBase, got {0!s}".format(stream))
+        super().__init__()
+        if not isinstance(stream, (RawIOBase, BufferedIOBase)):
+            raise TypeError(
+                f"stream: expected RawIOBase or BufferedIOBase, got {type(stream)}"
+            )
         if not stream.seekable():
-            raise ValueError("Buffer is not seekable")
+            raise ValueError("stream: buffer is not seekable")
         if stream.closed:
-            raise ValueError("Buffer is closed")
+            raise ValueError("stream: buffer is closed")
         if not isinstance(size, int):
-            raise TypeError("size: expected int, got {0!s}".format(type(size)))
+            raise TypeError(f"size: expected int, got {type(size)}")
         if start is None:
             start = stream.tell()
         elif not isinstance(start, int):
-            raise TypeError("start: expected int, got {0!s}".format(type(start)))
+            raise TypeError(f"start: expected int, got {type(start)}")
         self._start = start
         self._size = size
         self._cursor = 0
         self._stream = stream
-        super().__init__()
 
-    def readinto(self, array):
-        if not isinstance(array, (bytearray, memoryview)):
-            raise TypeError(
-                "array: expected bytearray or memoryview, got {0!s}".format(type(array))
-            )
+    @property
+    def size(self) -> int:
+        """Size of the chunk."""
+        return self._size
+
+    @property
+    def start(self) -> int:
+        """Start position of the chunk."""
+        return self._start
+
+    @property
+    def end(self) -> int:
+        """End position of the chunk"""
+        return self._start + self._size
+
+    # The type definition of `array` in `RawIOBase` of Python 3.7 is as
+    # follows:
+    #     `Union[bytearray, memoryview, array[Any], mmap, _CData]`
+    # Given that _CData is a private class of the types module we cannot
+    # fulfill the type definition here, that's why we ignore it.
+    def readinto(  # type: ignore[override]
+        self, array: Union[bytearray, memoryview]
+    ) -> Union[int, None]:
         if self.closed:
             raise ValueError("I/O operation on closed stream")
         if len(array) == 0:
@@ -58,10 +88,7 @@ class RawIOChunk(RawIOBase):
         if remaining <= 0:
             return 0
         array = memoryview(array)
-        try:
-            array = array.cast("B")
-        except AttributeError:
-            pass  # Python <=3.2 doesn't support format casting :(
+        array = array.cast("B")
         position = self._stream.tell()
         self._stream.seek(self._start + self._cursor)
         if len(array) > remaining:
@@ -75,11 +102,11 @@ class RawIOChunk(RawIOBase):
         self._stream.seek(position)
         return read_size
 
-    def seek(self, pos, whence=0):
+    def seek(self, pos: int, whence: int = 0) -> int:
         if not isinstance(pos, int):
-            raise TypeError("pos: expected int, got {0!s}".format(type(pos)))
+            raise TypeError(f"pos: expected int, got {type(pos)}")
         if not isinstance(whence, int):
-            raise TypeError("whence: expected int, got {0!s}".format(type(whence)))
+            raise TypeError(f"whence: expected int, got {type(whence)}")
         if whence == SEEK_SET:
             self._cursor = pos
         elif whence == SEEK_CUR:
@@ -87,21 +114,21 @@ class RawIOChunk(RawIOBase):
         elif whence == SEEK_END:
             self._cursor = self._size + pos
         else:
-            raise ValueError("whence: invalid value: {0!s}".format(whence))
+            raise ValueError(f"whence: invalid value: {whence}")
         return self._cursor
 
-    def tell(self):
+    def tell(self) -> int:
         return self._cursor
 
-    def seekable(self):
+    def seekable(self) -> bool:
         """Always returns `True`"""
         return True
 
-    def readable(self):
+    def readable(self) -> bool:
         """Always returns `True`"""
         return True
 
-    def close(self):
+    def close(self) -> None:
         """
         Do not use, close the underlying stream instead.
 
@@ -112,13 +139,13 @@ class RawIOChunk(RawIOBase):
         )
 
     @property
-    def closed(self):
+    def closed(self) -> bool:
         """
         Returns whenever the underlying stream is closed.
         """
         return self._stream.closed
 
-    def write(self, *args, **kwargs):
+    def write(self, *args, **kwargs) -> None:
         """
         This streams doesn't support writing.
 
@@ -126,7 +153,7 @@ class RawIOChunk(RawIOBase):
         """
         raise UnsupportedOperation("This stream doesn't support write")
 
-    def fileno(self):
+    def fileno(self) -> int:
         """
         Returns the underlying stream `fileno`.
         """
