@@ -76,28 +76,22 @@ def test_close():
         assert buffer.closed is False
 
 
-def test_closed_read_error():
+@pytest.mark.parametrize(
+    "action",
+    [
+        lambda buffer: buffer.read(),
+        lambda buffer: buffer.seek(0),
+        lambda buffer: buffer.tell(),
+        lambda buffer: buffer.seekable(),
+        lambda buffer: buffer.readable(),
+    ],
+)
+def test_closed_stream_error(action):
     with BytesIO(b"0123456789") as buffer:
         chunk = RawIOChunk(buffer, size=5)
         chunk.close()
         with pytest.raises(ClosedStreamError):
-            chunk.read()
-
-
-def test_closed_seek_error():
-    with BytesIO(b"0123456789") as buffer:
-        chunk = RawIOChunk(buffer, size=5)
-        chunk.close()
-        with pytest.raises(ClosedStreamError):
-            chunk.seek(0)
-
-
-def test_closed_tell_error():
-    with BytesIO(b"0123456789") as buffer:
-        chunk = RawIOChunk(buffer, size=5)
-        chunk.close()
-        with pytest.raises(ClosedStreamError):
-            chunk.tell()
+            action(chunk)
 
 
 def test_context_manager():
