@@ -2,7 +2,7 @@ from io import SEEK_CUR, SEEK_END, BytesIO
 
 import pytest
 
-from io_chunks import RawIOChunk
+from io_chunks.chunks import ClosedStreamError, RawIOChunk
 
 
 def test_file_begin():
@@ -49,7 +49,7 @@ def test_stream_closed():
         chunk = RawIOChunk(buffer, size=5)
         assert chunk.closed is False
     assert chunk.closed is True
-    with pytest.raises(ValueError):
+    with pytest.raises(ClosedStreamError):
         chunk.read()
 
 
@@ -80,7 +80,7 @@ def test_closed_read_error():
     with BytesIO(b"0123456789") as buffer:
         chunk = RawIOChunk(buffer, size=5)
         chunk.close()
-        with pytest.raises(ValueError):
+        with pytest.raises(ClosedStreamError):
             chunk.read()
 
 
@@ -88,7 +88,7 @@ def test_closed_seek_error():
     with BytesIO(b"0123456789") as buffer:
         chunk = RawIOChunk(buffer, size=5)
         chunk.close()
-        with pytest.raises(ValueError):
+        with pytest.raises(ClosedStreamError):
             chunk.seek(0)
 
 

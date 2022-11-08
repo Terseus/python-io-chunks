@@ -9,6 +9,11 @@ from io import (
 from typing import Optional, Union
 
 
+class ClosedStreamError(ValueError):
+    def __init__(self):
+        super().__init__("I/O operation on closed chunk")
+
+
 class RawIOChunk(RawIOBase):
     """
     An IO read-only object with access to a portion of another IO object.
@@ -90,7 +95,7 @@ class RawIOChunk(RawIOBase):
         return 0, even if there was remaining bytes in the chunk.
         """
         if self.closed:
-            raise ValueError("I/O operation on closed stream")
+            raise ClosedStreamError()
         if len(array) == 0:
             return 0
         remaining = self._size - self._cursor
@@ -113,7 +118,7 @@ class RawIOChunk(RawIOBase):
 
     def seek(self, pos: int, whence: int = 0) -> int:
         if self.closed:
-            raise ValueError("I/O operation on closed stream")
+            raise ClosedStreamError()
         if not isinstance(pos, int):
             raise TypeError(f"pos: expected int, got {type(pos)}")
         if not isinstance(whence, int):
@@ -130,17 +135,17 @@ class RawIOChunk(RawIOBase):
 
     def tell(self) -> int:
         if self.closed:
-            raise ValueError("I/O operation on closed stream")
+            raise ClosedStreamError()
         return self._cursor
 
     def seekable(self) -> bool:
         if self.closed:
-            raise ValueError("I/O operation on closed stream")
+            raise ClosedStreamError()
         return True
 
     def readable(self) -> bool:
         if self.closed:
-            raise ValueError("I/O operation on closed stream")
+            raise ClosedStreamError()
         return True
 
     def close(self) -> None:

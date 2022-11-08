@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add isort, black, pre-commit.
 - Add typing, mypy.
 - Now `RawIOChunk` instances can be closed.
+- Add `ClosedStreamError` exception, which inherits from `ValueError`.
 ### Removed
 - Remove Python 2 support.
 ### Changed
