@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from io import (
     SEEK_CUR,
     SEEK_END,
@@ -6,7 +8,8 @@ from io import (
     RawIOBase,
     UnsupportedOperation,
 )
-from typing import Optional, Union
+from types import TracebackType
+from typing import Optional, Type, Union
 
 
 class ClosedStreamError(ValueError):
@@ -77,6 +80,19 @@ class RawIOChunk(RawIOBase):
     def end(self) -> int:
         """End position of the chunk"""
         return self._start + self._size
+
+    def __enter__(self) -> RawIOChunk:
+        if self.closed:
+            raise ClosedStreamError()
+        return self
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
+        self.close()
 
     # The type definition of `array` in `RawIOBase` of Python 3.7 is as
     # follows:

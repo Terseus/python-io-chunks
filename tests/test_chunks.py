@@ -96,5 +96,22 @@ def test_closed_tell_error():
     with BytesIO(b"0123456789") as buffer:
         chunk = RawIOChunk(buffer, size=5)
         chunk.close()
-        with pytest.raises(ValueError):
+        with pytest.raises(ClosedStreamError):
             chunk.tell()
+
+
+def test_context_manager():
+    with BytesIO(b"0123456789") as buffer:
+        with RawIOChunk(buffer, size=5) as chunk:
+            assert chunk.closed is False
+        assert chunk.closed is True
+
+
+def test_double_context_manager_fails():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5)
+        with chunk as _:
+            pass
+        with pytest.raises(ClosedStreamError):
+            with chunk as _:
+                pass
