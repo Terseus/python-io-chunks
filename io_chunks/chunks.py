@@ -170,8 +170,6 @@ class RawIOChunk(RawIOBase):
 
         Does NOT close the underlying stream.
         """
-        if self.closed:
-            return
         self._closed = True
 
     @property
