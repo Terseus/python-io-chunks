@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Add isort, black, pre-commit.
 - Add typing, mypy.
+- Now `RawIOChunk` instances can be closed.
 ### Removed
 - Remove Python 2 support.
 ### Changed

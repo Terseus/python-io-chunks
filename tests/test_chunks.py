@@ -44,7 +44,7 @@ def test_eof():
         assert chunk.read() == b""
 
 
-def test_closed():
+def test_stream_closed():
     with BytesIO(b"01234") as buffer:
         chunk = RawIOChunk(buffer, size=5)
         assert chunk.closed is False
@@ -66,3 +66,35 @@ def test_seek():
         assert chunk.read() == b"789"
         assert chunk.seek(0) == 0
         assert chunk.read() == b"56789"
+
+
+def test_close():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5)
+        chunk.close()
+        assert chunk.closed is True
+        assert buffer.closed is False
+
+
+def test_closed_read_error():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5)
+        chunk.close()
+        with pytest.raises(ValueError):
+            chunk.read()
+
+
+def test_closed_seek_error():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5)
+        chunk.close()
+        with pytest.raises(ValueError):
+            chunk.seek(0)
+
+
+def test_closed_tell_error():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5)
+        chunk.close()
+        with pytest.raises(ValueError):
+            chunk.tell()

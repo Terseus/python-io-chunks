@@ -56,6 +56,7 @@ class RawIOChunk(RawIOBase):
         self._size = size
         self._cursor = 0
         self._stream = stream
+        self._closed = False
 
     @property
     def size(self) -> int:
@@ -111,6 +112,8 @@ class RawIOChunk(RawIOBase):
         return read_size
 
     def seek(self, pos: int, whence: int = 0) -> int:
+        if self.closed:
+            raise ValueError("I/O operation on closed stream")
         if not isinstance(pos, int):
             raise TypeError(f"pos: expected int, got {type(pos)}")
         if not isinstance(whence, int):
@@ -126,32 +129,36 @@ class RawIOChunk(RawIOBase):
         return self._cursor
 
     def tell(self) -> int:
+        if self.closed:
+            raise ValueError("I/O operation on closed stream")
         return self._cursor
 
     def seekable(self) -> bool:
-        """Always returns `True`"""
+        if self.closed:
+            raise ValueError("I/O operation on closed stream")
         return True
 
     def readable(self) -> bool:
-        """Always returns `True`"""
+        if self.closed:
+            raise ValueError("I/O operation on closed stream")
         return True
 
     def close(self) -> None:
         """
-        Do not use, close the underlying stream instead.
+        Mark this instance as closed.
 
-        :raises UnsupportedOperation:
+        Does NOT close the underlying stream.
         """
-        raise UnsupportedOperation(
-            "This stream cannot be closed, close the underlying stream instead"
-        )
+        if self.closed:
+            return
+        self._closed = True
 
     @property
     def closed(self) -> bool:
         """
-        Returns whenever the underlying stream is closed.
+        Returns whenever the underlying stream or this instance are closed.
         """
-        return self._stream.closed
+        return self._stream.closed or self._closed
 
     def write(self, *args, **kwargs) -> None:
         """
