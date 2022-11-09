@@ -140,6 +140,8 @@ class RawIOChunk(RawIOBase):
         if not isinstance(whence, int):
             raise TypeError(f"whence: expected int, got {type(whence)}")
         if whence == SEEK_SET:
+            if pos < 0:
+                raise ValueError("negative seek value -10")
             self._cursor = pos
         elif whence == SEEK_CUR:
             self._cursor += pos

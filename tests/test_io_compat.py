@@ -6,7 +6,7 @@ the other `IOBase` implementations.
 from io import BytesIO, IOBase, StringIO
 from itertools import product
 from tempfile import TemporaryFile
-from typing import IO, Callable, Union
+from typing import IO, Callable, Type, Union
 
 import pytest
 
@@ -81,5 +81,40 @@ def test_closed_raise_value_error(factory: IOFactory, action: Callable[[IO], Non
 def test_closed_values(factory: IOFactory):
     with factory() as instance:
         assert instance.tell() == 0
+        assert instance.seek(0) == 0
         assert instance.readable() is True
         assert instance.seekable() is True
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda: BytesIO(b"000"),
+        lambda: StringIO("000"),
+        lambda: RawIOChunk(BytesIO(b"000"), size=1),
+        lambda: temp_file_factory(b"000"),
+        lambda: temp_file_factory(b"000", buffering=0),
+    ],
+    ids=["BytesIO", "StringIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
+)
+def test_extra_seek(factory: IOFactory):
+    with factory() as instance:
+        assert instance.seek(100) == 100
+        assert instance.tell() == 100
+
+
+@pytest.mark.parametrize(
+    ["factory", "exception"],
+    [
+        (lambda: BytesIO(b"000"), ValueError),
+        (lambda: StringIO("000"), ValueError),
+        (lambda: RawIOChunk(BytesIO(b"000"), size=1), ValueError),
+        (lambda: temp_file_factory(b"000"), OSError),
+        (lambda: temp_file_factory(b"000", buffering=0), OSError),
+    ],
+    ids=["BytesIO", "StringIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
+)
+def test_negative_seek(factory: IOFactory, exception: Type[Exception]):
+    with factory() as instance:
+        with pytest.raises(exception):
+            assert instance.seek(-10) == -10

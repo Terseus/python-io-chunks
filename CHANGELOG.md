@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 - Now returns an empty bytes instead of raising `EOFError` when the underlying
   stream is empty.
+- Raise `ValueError` when trying to seek at a negative position.
 
 ## [1.0.2] - 2017-07-23
 ### Added
