@@ -1,20 +1,19 @@
 """
 These tests are aimed to ensure that the `RawIOChunk` instances behave consistently with
-the other `IOBase` implementations.
+the other `RawIOBase` implementations.
 """
 
 import os
 import re
-from io import SEEK_CUR, SEEK_END, BytesIO, IOBase, RawIOBase, StringIO
+from io import SEEK_CUR, SEEK_END, BytesIO, RawIOBase
 from itertools import product
 from tempfile import TemporaryFile
-from typing import IO, Callable, Type, Union
+from typing import IO, Callable, Type
 
 import pytest
 
 from io_chunks.chunks import RawIOChunk
 
-IOFactory = Callable[[], Union[IO, IOBase]]
 RawIOFactory = Callable[[], RawIOBase]
 
 
@@ -26,23 +25,22 @@ def temp_file_factory(contents: bytes, buffering=-1) -> IO:
 
 
 @pytest.mark.parametrize(
-    ["factory", "readed", "empty"],
+    ["factory", "readed"],
     [
-        (lambda: BytesIO(b"01234"), b"01234", b""),
-        (lambda: StringIO("01234"), "01234", ""),
-        (lambda: RawIOChunk(BytesIO(b"01234"), size=4), b"0123", b""),
-        (lambda: RawIOChunk(BytesIO(b"01234"), size=5), b"01234", b""),
-        (lambda: RawIOChunk(BytesIO(b"01234"), size=6), b"01234", b""),
-        (lambda: temp_file_factory(b"01234"), b"01234", b""),
-        (lambda: temp_file_factory(b"01234", buffering=0), b"01234", b""),
+        (lambda: BytesIO(b"01234"), b"01234"),
+        (lambda: RawIOChunk(BytesIO(b"01234"), size=4), b"0123"),
+        (lambda: RawIOChunk(BytesIO(b"01234"), size=5), b"01234"),
+        (lambda: RawIOChunk(BytesIO(b"01234"), size=6), b"01234"),
+        (lambda: temp_file_factory(b"01234"), b"01234"),
+        (lambda: temp_file_factory(b"01234", buffering=0), b"01234"),
     ],
 )
-def test_read(factory: IOFactory, readed: Union[bytes, str], empty: Union[bytes, str]):
+def test_read(factory: RawIOFactory, readed: bytes):
     with factory() as instance:
         result = instance.read()
         assert result == readed
-        assert instance.read() == empty
-        assert instance.read(1) == empty
+        assert instance.read() == b""
+        assert instance.read(1) == b""
 
 
 @pytest.mark.parametrize(
@@ -50,7 +48,6 @@ def test_read(factory: IOFactory, readed: Union[bytes, str], empty: Union[bytes,
     product(
         [
             lambda: BytesIO(b"000"),
-            lambda: StringIO("000"),
             lambda: RawIOChunk(BytesIO(b"000"), size=1),
             lambda: temp_file_factory(b"000"),
             lambda: temp_file_factory(b"000", buffering=0),
@@ -64,7 +61,9 @@ def test_read(factory: IOFactory, readed: Union[bytes, str], empty: Union[bytes,
         ],
     ),
 )
-def test_closed_raise_value_error(factory: IOFactory, action: Callable[[IO], None]):
+def test_closed_raise_value_error(
+    factory: RawIOFactory, action: Callable[[RawIOBase], None]
+):
     with factory() as instance:
         assert instance.closed is False
         instance.close()
@@ -75,13 +74,12 @@ def test_closed_raise_value_error(factory: IOFactory, action: Callable[[IO], Non
     "factory",
     [
         lambda: BytesIO(b"000"),
-        lambda: StringIO("000"),
         lambda: RawIOChunk(BytesIO(b"000"), size=1),
         lambda: temp_file_factory(b"000"),
         lambda: temp_file_factory(b"000", buffering=0),
     ],
 )
-def test_closed_values(factory: IOFactory):
+def test_closed_values(factory: RawIOFactory):
     with factory() as instance:
         assert instance.tell() == 0
         assert instance.seek(0) == 0
@@ -93,14 +91,13 @@ def test_closed_values(factory: IOFactory):
     "factory",
     [
         lambda: BytesIO(b"000"),
-        lambda: StringIO("000"),
         lambda: RawIOChunk(BytesIO(b"000"), size=1),
         lambda: temp_file_factory(b"000"),
         lambda: temp_file_factory(b"000", buffering=0),
     ],
-    ids=["BytesIO", "StringIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
+    ids=["BytesIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
 )
-def test_extra_seek(factory: IOFactory):
+def test_extra_seek(factory: RawIOFactory):
     with factory() as instance:
         assert instance.seek(100) == 100
         assert instance.tell() == 100
@@ -110,23 +107,16 @@ def test_extra_seek(factory: IOFactory):
     ["factory", "exception"],
     [
         (lambda: BytesIO(b"000"), ValueError),
-        (lambda: StringIO("000"), ValueError),
         (lambda: RawIOChunk(BytesIO(b"000"), size=1), ValueError),
         (lambda: temp_file_factory(b"000"), OSError),
         (lambda: temp_file_factory(b"000", buffering=0), OSError),
     ],
-    ids=["BytesIO", "StringIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
+    ids=["BytesIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
 )
-def test_negative_seek(factory: IOFactory, exception: Type[Exception]):
+def test_negative_seek(factory: RawIOFactory, exception: Type[Exception]):
     with factory() as instance:
         with pytest.raises(exception):
             assert instance.seek(-10) == -10
-
-
-def test_relative_seek_string_io():
-    with StringIO("000") as instance:
-        with pytest.raises(OSError, match="Can't do nonzero cur-relative seeks"):
-            assert instance.seek(-2, SEEK_END) == 1
 
 
 @pytest.mark.parametrize(
@@ -137,7 +127,7 @@ def test_relative_seek_string_io():
     ],
     ids=["BytesIO", "RawIOChunk"],
 )
-def test_relative_seek(factory: IOFactory):
+def test_relative_seek(factory: RawIOFactory):
     with factory() as instance:
         assert instance.seek(0) == 0
         assert instance.seek(-2, SEEK_END) == 1
@@ -156,7 +146,7 @@ def test_relative_seek(factory: IOFactory):
     ],
     ids=["TempFile", "TempFile (unbuffered)"],
 )
-def test_relative_seek_oserror(factory: IOFactory):
+def test_relative_seek_oserror(factory: RawIOFactory):
     with factory() as instance:
         assert instance.seek(0) == 0
         assert instance.seek(-2, SEEK_END) == 1
@@ -173,11 +163,10 @@ def test_relative_seek_oserror(factory: IOFactory):
     "factory",
     [
         lambda: BytesIO(b"000"),
-        lambda: StringIO("000"),
         lambda: RawIOChunk(BytesIO(b"000"), size=1),
     ],
 )
-def test_seek_hole_error(factory: IOFactory):
+def test_seek_hole_error(factory: RawIOFactory):
     with factory() as instance:
         with pytest.raises(ValueError):
             instance.seek(0, os.SEEK_DATA)
@@ -192,7 +181,7 @@ def test_seek_hole_error(factory: IOFactory):
         lambda: temp_file_factory(b"000", buffering=0),
     ],
 )
-def test_seek_hole_valid(factory: IOFactory):
+def test_seek_hole_valid(factory: RawIOFactory):
     with factory() as instance:
         assert instance.seek(0, os.SEEK_DATA) == 0
         assert instance.seek(0, os.SEEK_HOLE) == 3
@@ -202,13 +191,12 @@ def test_seek_hole_valid(factory: IOFactory):
     "factory",
     [
         lambda: BytesIO(b"000"),
-        lambda: StringIO("000"),
         lambda: RawIOChunk(BytesIO(b"000"), size=1),
         lambda: temp_file_factory(b"000"),
         lambda: temp_file_factory(b"000", buffering=0),
     ],
 )
-def test_pos_invalid_type(factory: IOFactory):
+def test_pos_invalid_type(factory: RawIOFactory):
     with factory() as instance:
         with pytest.raises(TypeError):
             instance.seek("a")  # type: ignore[arg-type]
@@ -236,14 +224,13 @@ def test_readinto_empty_array(factory: RawIOFactory):
     ["factory", "readed"],
     [
         (lambda: BytesIO(b"000"), b"00"),
-        (lambda: StringIO("000"), "00"),
         (lambda: RawIOChunk(BytesIO(b"000"), size=3), b"00"),
         (lambda: temp_file_factory(b"000"), b"00"),
         (lambda: temp_file_factory(b"000", buffering=0), b"00"),
     ],
-    ids=["BytesIO", "StringIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
+    ids=["BytesIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
 )
-def test_truncate(factory: IOFactory, readed: Union[bytes, str]):
+def test_truncate(factory: RawIOFactory, readed: bytes):
     with factory() as instance:
         assert instance.truncate(2) == 2
         assert instance.read() == readed
@@ -253,14 +240,13 @@ def test_truncate(factory: IOFactory, readed: Union[bytes, str]):
     ["factory", "exception"],
     [
         (lambda: BytesIO(b"000"), ValueError),
-        (lambda: StringIO("000"), ValueError),
         (lambda: RawIOChunk(BytesIO(b"000"), size=1), ValueError),
         (lambda: temp_file_factory(b"000"), OSError),
         (lambda: temp_file_factory(b"000", buffering=0), OSError),
     ],
-    ids=["BytesIO", "StringIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
+    ids=["BytesIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
 )
-def test_truncate_negative(factory: IOFactory, exception: Type[Exception]):
+def test_truncate_negative(factory: RawIOFactory, exception: Type[Exception]):
     with factory() as instance:
         with pytest.raises(exception):
             assert instance.truncate(-1) == 0
