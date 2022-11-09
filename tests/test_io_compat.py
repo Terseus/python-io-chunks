@@ -3,7 +3,8 @@ These tests are aimed to ensure that the `RawIOChunk` instances behave consisten
 the other `IOBase` implementations.
 """
 
-from io import BytesIO, IOBase, StringIO
+import re
+from io import SEEK_CUR, SEEK_END, BytesIO, IOBase, StringIO
 from itertools import product
 from tempfile import TemporaryFile
 from typing import IO, Callable, Type, Union
@@ -118,3 +119,49 @@ def test_negative_seek(factory: IOFactory, exception: Type[Exception]):
     with factory() as instance:
         with pytest.raises(exception):
             assert instance.seek(-10) == -10
+
+
+def test_relative_seek_string_io():
+    with StringIO("000") as instance:
+        with pytest.raises(OSError, match="Can't do nonzero cur-relative seeks"):
+            assert instance.seek(-2, SEEK_END) == 1
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda: BytesIO(b"000"),
+        lambda: RawIOChunk(BytesIO(b"000"), size=3),
+    ],
+    ids=["BytesIO", "RawIOChunk"],
+)
+def test_relative_seek(factory: IOFactory):
+    with factory() as instance:
+        assert instance.seek(0) == 0
+        assert instance.seek(-2, SEEK_END) == 1
+        assert instance.seek(1, SEEK_CUR) == 2
+        assert instance.seek(-1, SEEK_CUR) == 1
+        assert instance.seek(-1, SEEK_CUR) == 0
+        assert instance.seek(-1, SEEK_CUR) == 0
+        assert instance.seek(-4, SEEK_END) == 0
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda: temp_file_factory(b"000"),
+        lambda: temp_file_factory(b"000", buffering=0),
+    ],
+    ids=["TempFile", "TempFile (unbuffered)"],
+)
+def test_relative_seek_oserror(factory: IOFactory):
+    with factory() as instance:
+        assert instance.seek(0) == 0
+        assert instance.seek(-2, SEEK_END) == 1
+        assert instance.seek(1, SEEK_CUR) == 2
+        assert instance.seek(-1, SEEK_CUR) == 1
+        assert instance.seek(-1, SEEK_CUR) == 0
+        with pytest.raises(OSError, match=re.escape(r"[Errno 22] Invalid argument")):
+            instance.seek(-1, SEEK_CUR)
+        with pytest.raises(OSError, match=re.escape(r"[Errno 22] Invalid argument")):
+            assert instance.seek(-4, SEEK_END) == 0

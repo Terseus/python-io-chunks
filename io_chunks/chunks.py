@@ -149,6 +149,8 @@ class RawIOChunk(RawIOBase):
             self._cursor = self._size + pos
         else:
             raise ValueError(f"whence: invalid value: {whence}")
+        if self._cursor < 0:
+            self._cursor = 0
         return self._cursor
 
     def tell(self) -> int:

@@ -66,6 +66,8 @@ def test_seek():
         assert chunk.read() == b"789"
         assert chunk.seek(0) == 0
         assert chunk.read() == b"56789"
+        assert chunk.seek(0) == 0
+        assert chunk.seek(-1, SEEK_CUR) == 0
 
 
 def test_close():
