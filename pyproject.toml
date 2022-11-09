@@ -32,13 +32,11 @@ content-type = "text/markdown"
 
 [tool.coverage.run]
 branch = true
+source = ["io_chunks/"]
 
 [tool.coverage.report]
 precision = 2
 show_missing = true
-
-[tool.pytest.ini_options]
-addopts = "--cov io_chunks/"
 
 [tool.isort]
 profile = "black"
