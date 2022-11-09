@@ -111,3 +111,30 @@ def test_double_context_manager_fails():
         with pytest.raises(ClosedStreamError):
             with chunk as _:
                 pass
+
+
+def test_flush():
+    with BytesIO(b"01234") as buffer:
+        chunk = RawIOChunk(buffer, size=2)
+        assert chunk.closed is False
+        chunk.flush()
+        assert chunk.closed is False
+
+
+def test_isatty():
+    with BytesIO(b"01234") as buffer:
+        chunk = RawIOChunk(buffer, size=2)
+        assert chunk.isatty() is False
+
+
+def test_readline():
+    with BytesIO(b"01234\n56789") as buffer:
+        chunk = RawIOChunk(buffer, size=5, start=2)
+        assert chunk.readline() == b"234\n"
+        assert chunk.readline() == b"5"
+
+
+def test_readlines():
+    with BytesIO(b"01234\n56789") as buffer:
+        chunk = RawIOChunk(buffer, size=5, start=2)
+        assert chunk.readlines() == [b"234\n", b"5"]
