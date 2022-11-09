@@ -2,7 +2,8 @@ from io import SEEK_CUR, SEEK_END, BytesIO
 
 import pytest
 
-from io_chunks.chunks import ClosedStreamError, RawIOChunk
+from io_chunks.exceptions import ClosedStreamError
+from io_chunks.raw_io_chunk import RawIOChunk
 
 
 def test_file_begin():

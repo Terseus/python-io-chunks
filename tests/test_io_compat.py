@@ -13,7 +13,7 @@ from typing import IO, Any, Callable, ContextManager
 
 import pytest
 
-from io_chunks.chunks import RawIOChunk
+from io_chunks.raw_io_chunk import RawIOChunk
 
 IOFactory = Callable[[], IO]
 

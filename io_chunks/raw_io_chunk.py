@@ -11,10 +11,7 @@ from io import (
 from types import TracebackType
 from typing import IO, Optional, Type, Union
 
-
-class ClosedStreamError(ValueError):
-    def __init__(self):
-        super().__init__("I/O operation on closed chunk")
+from .exceptions import ClosedStreamError
 
 
 class RawIOChunk(RawIOBase, IO):
