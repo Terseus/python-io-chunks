@@ -11,10 +11,7 @@ from io import (
 from types import TracebackType
 from typing import IO, Optional, Type, Union
 
-
-class ClosedStreamError(ValueError):
-    def __init__(self):
-        super().__init__("I/O operation on closed chunk")
+from .exceptions import ClosedStreamError
 
 
 class RawIOChunk(RawIOBase, IO):
@@ -141,7 +138,7 @@ class RawIOChunk(RawIOBase, IO):
             raise TypeError(f"whence: expected int, got {type(whence)}")
         if whence == SEEK_SET:
             if pos < 0:
-                raise ValueError("negative seek value -10")
+                raise ValueError(f"negative seek value {pos}")
             self._cursor = pos
         elif whence == SEEK_CUR:
             self._cursor += pos
@@ -162,7 +159,7 @@ class RawIOChunk(RawIOBase, IO):
         if size is None:
             size = self._cursor
         elif size < 0:
-            raise ValueError("negative size value -1")
+            raise ValueError(f"negative size value {size}")
         self._size = size
         return self._size
 

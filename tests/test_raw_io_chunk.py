@@ -1,8 +1,10 @@
+import re
 from io import SEEK_CUR, SEEK_END, BytesIO
 
 import pytest
 
-from io_chunks.chunks import ClosedStreamError, RawIOChunk
+from io_chunks.exceptions import ClosedStreamError
+from io_chunks.raw_io_chunk import RawIOChunk
 
 
 def test_file_begin():
@@ -68,6 +70,13 @@ def test_seek():
         assert chunk.read() == b"56789"
         assert chunk.seek(0) == 0
         assert chunk.seek(-1, SEEK_CUR) == 0
+
+
+def test_seek_negative_invalid():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5, start=5)
+        with pytest.raises(ValueError, match=re.escape("negative seek value -2")):
+            chunk.seek(-2)
 
 
 def test_close():
@@ -169,8 +178,8 @@ def test_truncate_middle():
 def test_truncate_negative_invalid():
     with BytesIO(b"0123456789") as buffer:
         chunk = RawIOChunk(buffer, size=5, start=2)
-        with pytest.raises(ValueError):
-            chunk.truncate(-1)
+        with pytest.raises(ValueError, match=re.escape("negative size value -2")):
+            chunk.truncate(-2)
 
 
 def test_truncate_doesnt_change_position():

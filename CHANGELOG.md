@@ -15,16 +15,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Add tests to ensure that `RawIOChunk` behaves consistently with all the other
   Now `RawIOChunk` implements `IO` interface.
 - Implement `IO` interface for `RawIOChunk`.
+- Add `exceptions.py`.
 ### Removed
 - Remove Python 2 support.
 ### Changed
 - Change `README.rst` to `README.md`.
 - Replace `setup.py` with `pyproject.toml`.
+- Renamed `chunks.py` to `raw_io_chunk.py`.
 ### Fixed
 - Now returns an empty bytes instead of raising `EOFError` when the underlying
   stream is empty.
 - Raise `ValueError` when trying to seek at a negative position.
 - Prevent to reach negative seek positions.
+- Fix hardcoded values in some `ValueError` raised.
 
 ## [1.0.2] - 2017-07-23
 ### Added
