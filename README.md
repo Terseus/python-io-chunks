@@ -49,16 +49,18 @@ Use the source, Luke!
 ## Run the tests
 
 Create a venv with your favorite tool and activate it.
-Then, install the development dependencies:
+Then, install the development dependencies and execute `pytest`:
 
 ```bash
 $ pip install -r requirements-dev.txt
+$ pytest
 ```
 
-Run the tests with `pytest`:
+Alternatively, to execute the tests using tox:
 
 ```bash
-$ pytest
+$ pip install tox
+$ tox
 ```
 
 ## License
