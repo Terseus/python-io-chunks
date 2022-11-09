@@ -6,11 +6,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Add isort, black, pre-commit.
+- Add typing, mypy.
+- Now `RawIOChunk` instances can be closed.
+- Add `ClosedStreamError` exception, which inherits from `ValueError`.
+- Now `RawIOChunk` instances can be used as a context manager.
+- Implement `truncate` for `RawIOChunk`.
+- Add tests to ensure that `RawIOChunk` behaves consistently with all the other
+  Now `RawIOChunk` implements `IO` interface.
+- Implement `IO` interface for `RawIOChunk`.
+### Removed
+- Remove Python 2 support.
+### Changed
 - Change `README.rst` to `README.md`.
 - Replace `setup.py` with `pyproject.toml`.
-- Add isort, black, pre-commit.
-- Remove Python 2 support.
-- Add typing, mypy.
+### Fixed
+- Now returns an empty bytes instead of raising `EOFError` when the underlying
+  stream is empty.
+- Raise `ValueError` when trying to seek at a negative position.
+- Prevent to reach negative seek positions.
 
 ## [1.0.2] - 2017-07-23
 ### Added

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from io import (
     SEEK_CUR,
     SEEK_END,
@@ -6,10 +8,16 @@ from io import (
     RawIOBase,
     UnsupportedOperation,
 )
-from typing import Optional, Union
+from types import TracebackType
+from typing import IO, Optional, Type, Union
 
 
-class RawIOChunk(RawIOBase):
+class ClosedStreamError(ValueError):
+    def __init__(self):
+        super().__init__("I/O operation on closed chunk")
+
+
+class RawIOChunk(RawIOBase, IO):
     """
     An IO read-only object with access to a portion of another IO object.
     In other terms, a sub-stream of a stream.
@@ -56,6 +64,7 @@ class RawIOChunk(RawIOBase):
         self._size = size
         self._cursor = 0
         self._stream = stream
+        self._closed = False
 
     @property
     def size(self) -> int:
@@ -71,6 +80,19 @@ class RawIOChunk(RawIOBase):
     def end(self) -> int:
         """End position of the chunk"""
         return self._start + self._size
+
+    def __enter__(self) -> RawIOChunk:
+        if self.closed:
+            raise ClosedStreamError()
+        return self
+
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
+        self.close()
 
     # The type definition of `array` in `RawIOBase` of Python 3.7 is as
     # follows:
@@ -89,7 +111,7 @@ class RawIOChunk(RawIOBase):
         return 0, even if there was remaining bytes in the chunk.
         """
         if self.closed:
-            raise ValueError("I/O operation on closed stream")
+            raise ClosedStreamError()
         if len(array) == 0:
             return 0
         remaining = self._size - self._cursor
@@ -111,11 +133,15 @@ class RawIOChunk(RawIOBase):
         return read_size
 
     def seek(self, pos: int, whence: int = 0) -> int:
+        if self.closed:
+            raise ClosedStreamError()
         if not isinstance(pos, int):
             raise TypeError(f"pos: expected int, got {type(pos)}")
         if not isinstance(whence, int):
             raise TypeError(f"whence: expected int, got {type(whence)}")
         if whence == SEEK_SET:
+            if pos < 0:
+                raise ValueError("negative seek value -10")
             self._cursor = pos
         elif whence == SEEK_CUR:
             self._cursor += pos
@@ -123,37 +149,54 @@ class RawIOChunk(RawIOBase):
             self._cursor = self._size + pos
         else:
             raise ValueError(f"whence: invalid value: {whence}")
+        if self._cursor < 0:
+            self._cursor = 0
         return self._cursor
 
+    def truncate(self, size: Optional[int] = None) -> int:
+        """
+        Resize the chunk to the given size, or to the current position if size is
+        `None`.
+        The current position isn't changed.
+        """
+        if size is None:
+            size = self._cursor
+        elif size < 0:
+            raise ValueError("negative size value -1")
+        self._size = size
+        return self._size
+
     def tell(self) -> int:
+        if self.closed:
+            raise ClosedStreamError()
         return self._cursor
 
     def seekable(self) -> bool:
-        """Always returns `True`"""
+        if self.closed:
+            raise ClosedStreamError()
         return True
 
     def readable(self) -> bool:
-        """Always returns `True`"""
+        if self.closed:
+            raise ClosedStreamError()
         return True
 
     def close(self) -> None:
         """
-        Do not use, close the underlying stream instead.
+        Mark this instance as closed.
 
-        :raises UnsupportedOperation:
+        Does NOT close the underlying stream.
         """
-        raise UnsupportedOperation(
-            "This stream cannot be closed, close the underlying stream instead"
-        )
+        self._closed = True
 
     @property
     def closed(self) -> bool:
         """
-        Returns whenever the underlying stream is closed.
+        Returns whenever the underlying stream or this instance are closed.
         """
-        return self._stream.closed
+        return self._stream.closed or self._closed
 
-    def write(self, *args, **kwargs) -> None:
+    def write(self, bytes) -> int:
         """
         This streams doesn't support writing.
 
