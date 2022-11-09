@@ -3,8 +3,9 @@ These tests are aimed to ensure that the `RawIOChunk` instances behave consisten
 the other `IOBase` implementations.
 """
 
+import os
 import re
-from io import SEEK_CUR, SEEK_END, BytesIO, IOBase, StringIO
+from io import SEEK_CUR, SEEK_END, BytesIO, IOBase, RawIOBase, StringIO
 from itertools import product
 from tempfile import TemporaryFile
 from typing import IO, Callable, Type, Union
@@ -14,6 +15,7 @@ import pytest
 from io_chunks.chunks import RawIOChunk
 
 IOFactory = Callable[[], Union[IO, IOBase]]
+RawIOFactory = Callable[[], RawIOBase]
 
 
 def temp_file_factory(contents: bytes, buffering=-1) -> IO:
@@ -165,3 +167,66 @@ def test_relative_seek_oserror(factory: IOFactory):
             instance.seek(-1, SEEK_CUR)
         with pytest.raises(OSError, match=re.escape(r"[Errno 22] Invalid argument")):
             assert instance.seek(-4, SEEK_END) == 0
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda: BytesIO(b"000"),
+        lambda: StringIO("000"),
+        lambda: RawIOChunk(BytesIO(b"000"), size=1),
+    ],
+)
+def test_seek_hole_error(factory: IOFactory):
+    with factory() as instance:
+        with pytest.raises(ValueError):
+            instance.seek(0, os.SEEK_DATA)
+        with pytest.raises(ValueError):
+            instance.seek(0, os.SEEK_HOLE)
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda: temp_file_factory(b"000"),
+        lambda: temp_file_factory(b"000", buffering=0),
+    ],
+)
+def test_seek_hole_valid(factory: IOFactory):
+    with factory() as instance:
+        assert instance.seek(0, os.SEEK_DATA) == 0
+        assert instance.seek(0, os.SEEK_HOLE) == 3
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda: BytesIO(b"000"),
+        lambda: StringIO("000"),
+        lambda: RawIOChunk(BytesIO(b"000"), size=1),
+        lambda: temp_file_factory(b"000"),
+        lambda: temp_file_factory(b"000", buffering=0),
+    ],
+)
+def test_pos_invalid_type(factory: IOFactory):
+    with factory() as instance:
+        with pytest.raises(TypeError):
+            instance.seek("a")  # type: ignore[arg-type]
+        with pytest.raises(TypeError):
+            instance.seek(1, "a")  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    "factory",
+    [
+        lambda: BytesIO(b"000"),
+        lambda: RawIOChunk(BytesIO(b"000"), size=1),
+        lambda: temp_file_factory(b"000"),
+        lambda: temp_file_factory(b"000", buffering=0),
+    ],
+)
+def test_readinto_empty_array(factory: RawIOFactory):
+    with factory() as instance:
+        buffer = bytearray(0)
+        assert instance.readinto(buffer) == 0
+        assert buffer == b""
