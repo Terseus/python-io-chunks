@@ -138,3 +138,46 @@ def test_readlines():
     with BytesIO(b"01234\n56789") as buffer:
         chunk = RawIOChunk(buffer, size=5, start=2)
         assert chunk.readlines() == [b"234\n", b"5"]
+
+
+def test_truncate_to_current():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5)
+        chunk.seek(1)
+        assert chunk.truncate() == 1
+        chunk.seek(0)
+        assert chunk.read() == b"0"
+
+
+def test_truncate_to_greater():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5)
+        assert chunk.truncate(7) == 7
+        assert chunk.read() == b"0123456"
+
+
+def test_truncate_middle():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5, start=2)
+        assert chunk.truncate(2) == 2
+        assert chunk.read() == b"23"
+        assert chunk.truncate(4) == 4
+        chunk.seek(0)
+        assert chunk.read() == b"2345"
+
+
+def test_truncate_negative_invalid():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=5, start=2)
+        with pytest.raises(ValueError):
+            chunk.truncate(-1)
+
+
+def test_truncate_doesnt_change_position():
+    with BytesIO(b"0123456789") as buffer:
+        chunk = RawIOChunk(buffer, size=3, start=2)
+        assert chunk.read(1) == b"2"
+        assert chunk.truncate(2) == 2
+        assert chunk.read() == b"3"
+        assert chunk.truncate(5) == 5
+        assert chunk.read() == b"456"

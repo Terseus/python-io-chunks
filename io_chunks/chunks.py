@@ -153,6 +153,19 @@ class RawIOChunk(RawIOBase):
             self._cursor = 0
         return self._cursor
 
+    def truncate(self, size: Optional[int] = None) -> int:
+        """
+        Resize the chunk to the given size, or to the current position if size is
+        `None`.
+        The current position isn't changed.
+        """
+        if size is None:
+            size = self._cursor
+        elif size < 0:
+            raise ValueError("negative size value -1")
+        self._size = size
+        return self._size
+
     def tell(self) -> int:
         if self.closed:
             raise ClosedStreamError()

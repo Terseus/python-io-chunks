@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Now `RawIOChunk` instances can be closed.
 - Add `ClosedStreamError` exception, which inherits from `ValueError`.
 - Now `RawIOChunk` instances can be used as a context manager.
+- Implement `truncate` for `RawIOChunk`.
 ### Removed
 - Remove Python 2 support.
 ### Changed

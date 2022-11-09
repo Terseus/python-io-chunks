@@ -230,3 +230,37 @@ def test_readinto_empty_array(factory: RawIOFactory):
         buffer = bytearray(0)
         assert instance.readinto(buffer) == 0
         assert buffer == b""
+
+
+@pytest.mark.parametrize(
+    ["factory", "readed"],
+    [
+        (lambda: BytesIO(b"000"), b"00"),
+        (lambda: StringIO("000"), "00"),
+        (lambda: RawIOChunk(BytesIO(b"000"), size=3), b"00"),
+        (lambda: temp_file_factory(b"000"), b"00"),
+        (lambda: temp_file_factory(b"000", buffering=0), b"00"),
+    ],
+    ids=["BytesIO", "StringIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
+)
+def test_truncate(factory: IOFactory, readed: Union[bytes, str]):
+    with factory() as instance:
+        assert instance.truncate(2) == 2
+        assert instance.read() == readed
+
+
+@pytest.mark.parametrize(
+    ["factory", "exception"],
+    [
+        (lambda: BytesIO(b"000"), ValueError),
+        (lambda: StringIO("000"), ValueError),
+        (lambda: RawIOChunk(BytesIO(b"000"), size=1), ValueError),
+        (lambda: temp_file_factory(b"000"), OSError),
+        (lambda: temp_file_factory(b"000", buffering=0), OSError),
+    ],
+    ids=["BytesIO", "StringIO", "RawIOChunk", "TempFile", "TempFile (unbuffered)"],
+)
+def test_truncate_negative(factory: IOFactory, exception: Type[Exception]):
+    with factory() as instance:
+        with pytest.raises(exception):
+            assert instance.truncate(-1) == 0
