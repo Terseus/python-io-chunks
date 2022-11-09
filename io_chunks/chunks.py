@@ -9,7 +9,7 @@ from io import (
     UnsupportedOperation,
 )
 from types import TracebackType
-from typing import Optional, Type, Union
+from typing import IO, Optional, Type, Union
 
 
 class ClosedStreamError(ValueError):
@@ -17,7 +17,7 @@ class ClosedStreamError(ValueError):
         super().__init__("I/O operation on closed chunk")
 
 
-class RawIOChunk(RawIOBase):
+class RawIOChunk(RawIOBase, IO):
     """
     An IO read-only object with access to a portion of another IO object.
     In other terms, a sub-stream of a stream.
@@ -196,7 +196,7 @@ class RawIOChunk(RawIOBase):
         """
         return self._stream.closed or self._closed
 
-    def write(self, *args, **kwargs) -> None:
+    def write(self, bytes) -> int:
         """
         This streams doesn't support writing.
 
