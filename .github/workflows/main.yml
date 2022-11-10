@@ -40,5 +40,5 @@ jobs:
 
       - name: Build wheel
         run: |
-          python -m build --wheel
-          twine check
+          python -m build --wheel --sdist
+          twine check dist/*
