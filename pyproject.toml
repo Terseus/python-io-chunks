@@ -1,10 +1,9 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "io-chunks"
-version = "1.0.2"
 description = "Utilities to divide a buffer into smaller buffers"
 urls = {homepage = "https://github.com/Terseus/python-io-chunks/"}
 authors = [
@@ -19,7 +18,7 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-dynamic = ["readme", "dependencies"]
+dynamic = ["readme", "dependencies", "version"]
 keywords = ["io", "library", "development"]
 
 [tool.setuptools]
@@ -29,6 +28,10 @@ packages = ["io_chunks"]
 [tool.setuptools.dynamic.readme]
 file = ["README.md"]
 content-type = "text/markdown"
+
+[tool.setuptools_scm]
+version_scheme = "post-release"
+local_scheme = "no-local-version"
 
 [tool.coverage.run]
 branch = true
