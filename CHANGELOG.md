@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Raise `ValueError` when trying to seek at a negative position.
 - Prevent to reach negative seek positions.
 - Fix hardcoded values in some `ValueError` raised.
+- Fix `flake8 .` scan the whole `.tox` and `build` directories.
 
 ## [1.0.2] - 2017-07-23
 ### Added

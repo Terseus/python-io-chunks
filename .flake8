@@ -2,4 +2,4 @@
 extend-ingore = E203
 max_complexity = 10
 max_line_length = 88
-exclude = venv,env,.venv,.env
+exclude = venv,env,.venv,.env,dist,build,.tox
