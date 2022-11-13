@@ -22,7 +22,7 @@ extensions = [
     "myst_parser",
     "sphinx.ext.autodoc",
 ]
-
+source_suffix = [".md"]
 templates_path = ["_templates"]
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
