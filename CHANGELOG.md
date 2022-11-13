@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Change `README.rst` to `README.md`.
 - Replace `setup.py` with `pyproject.toml`.
 - Renamed `chunks.py` to `raw_io_chunk.py`.
+- Changed Sphinx doc to use Markdown with the [Myst parser](https://myst-parser.readthedocs.io/en/latest/).
 
 ### Fixed
 

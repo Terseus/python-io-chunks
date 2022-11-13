@@ -34,6 +34,12 @@ with open("test_file", "rb") as file_handle:
 
 Amazing, right?
 
+## Why?
+
+While writing a parser I found this class to be somewhat useful, around 7 years ago.
+
+While today I don't really see it today, I decided to clean it up and released it in case it's useful for someone.
+
 ## Install
 
 Use `pip`:
@@ -44,7 +50,7 @@ $ pip install io-chunks
 
 ## Documentation
 
-Use the source, Luke!
+You can read it at [readthedocs](https://python-io-chunks.readthedocs.io/en/latest/).
 
 ## Run the tests
 
