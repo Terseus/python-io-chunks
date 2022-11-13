@@ -1,4 +1,4 @@
-name: Publish to https://test.pypi.org/
+name: Publish package
 
 on:
   push:
