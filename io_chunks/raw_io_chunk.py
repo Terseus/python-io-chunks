@@ -9,7 +9,7 @@ from io import (
     UnsupportedOperation,
 )
 from types import TracebackType
-from typing import IO, Optional, Type, Union
+from typing import IO, Iterable, Optional, Type, Union
 
 from .exceptions import ClosedStreamError
 
@@ -206,3 +206,11 @@ class RawIOChunk(RawIOBase, IO):
         Returns the underlying stream `fileno`.
         """
         return self._stream.fileno()
+
+    def writelines(self, lines: Iterable[bytes]):  # type: ignore[override]
+        """
+        This streams doesn't support writing.
+
+        :raises UnsupportedOperation:
+        """
+        raise UnsupportedOperation("This stream doesn't support write")
